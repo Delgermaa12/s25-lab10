@@ -1,46 +1,42 @@
-import React, { useState } from 'react'
-import './Quiz.css'
-import QuizQuestion from '../core/QuizQuestion';
+import React, { useState } from 'react';
+import './Quiz.css';
+import QuizCore from '../core/QuizCore.ts';
 
-interface QuizState {
-  questions: QuizQuestion[]
-  currentQuestionIndex: number
-  selectedAnswer: string | null
-  score: number
-}
+const quizCore = new QuizCore();
 
 const Quiz: React.FC = () => {
-  const initialQuestions: QuizQuestion[] = [
-    {
-      question: 'What is the capital of France?',
-      options: ['London', 'Berlin', 'Paris', 'Madrid'],
-      correctAnswer: 'Paris',
-    },
-  ];
-  const [state, setState] = useState<QuizState>({
-    questions: initialQuestions,
-    currentQuestionIndex: 0,  // Initialize the current question index.
-    selectedAnswer: null,  // Initialize the selected answer.
-    score: 0,  // Initialize the score.
-  });
+  const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState<number>(0);
+  const [score, setScore] = useState<number>(0);
+
+  const currentQuestion = quizCore.getCurrentQuestion();
 
   const handleOptionSelect = (option: string): void => {
-    setState((prevState) => ({ ...prevState, selectedAnswer: option }));
-  }
-
+    setSelectedAnswer(option);
+  };
 
   const handleButtonClick = (): void => {
-    // Task3: Implement the logic for button click, such as moving to the next question.
-  } 
+    if (selectedAnswer !== null) {
+      quizCore.answerQuestion(selectedAnswer);
+      setScore(quizCore.getScore());
 
-  const { questions, currentQuestionIndex, selectedAnswer, score } = state;
-  const currentQuestion = questions[currentQuestionIndex];
+      if (quizCore.hasNextQuestion()) {
+        quizCore.nextQuestion();
+        setCurrentQuestionIndex((prevIndex) => prevIndex + 1);
+        setSelectedAnswer(null); 
+      } else {
+        setCurrentQuestionIndex(quizCore.getTotalQuestions()); 
+      }
+    } else {
+      alert('Please select an answer before proceeding.');
+    }
+  };
 
-  if (!currentQuestion) {
+  if (!currentQuestion || currentQuestionIndex >= quizCore.getTotalQuestions()) {
     return (
       <div>
         <h2>Quiz Completed</h2>
-        <p>Final Score: {score} out of {questions.length}</p>
+        <p>Final Score: {score} out of {quizCore.getTotalQuestions()}</p>
       </div>
     );
   }
@@ -49,7 +45,7 @@ const Quiz: React.FC = () => {
     <div>
       <h2>Quiz Question:</h2>
       <p>{currentQuestion.question}</p>
-    
+
       <h3>Answer Options:</h3>
       <ul>
         {currentQuestion.options.map((option) => (
