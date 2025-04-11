@@ -23,9 +23,10 @@ const Quiz: React.FC = () => {
       if (quizCore.hasNextQuestion()) {
         quizCore.nextQuestion();
         setCurrentQuestionIndex((prevIndex) => prevIndex + 1);
-        setSelectedAnswer(null); 
+        setSelectedAnswer(null); // Reset selected answer
       } else {
-        setCurrentQuestionIndex(quizCore.getTotalQuestions()); 
+        // Quiz completed
+        setCurrentQuestionIndex(quizCore.getTotalQuestions()); // Go beyond range to trigger completion
       }
     } else {
       alert('Please select an answer before proceeding.');
