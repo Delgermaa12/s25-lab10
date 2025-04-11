@@ -2,9 +2,12 @@
 Enhance User Experience by adding visual highlights to selected answers
 Hint: You can use the className attribute for highlighting*/
 .selected {
-    cursor: pointer; /* Change cursor on hover for interactivity */
-  }
-  
+  background-color: #d1e7fd; /* Highlight color */
+  border-color: #3498db;     /* Matching border color */
+  font-weight: bold;
+  cursor: pointer;
+}
+
   /* Additional styling for better user experience */
   .selected:hover {
     cursor: pointer;
